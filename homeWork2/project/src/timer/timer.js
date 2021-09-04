@@ -1,7 +1,6 @@
 'use strict';
-import {Duration} from "../../liberty/luxon.js";
+import {Duration} from "luxon";
 import {validateValueTimer, showButton} from '../utils.js'
-
 
 
 let buttonRun = document.getElementById("buttonStart");

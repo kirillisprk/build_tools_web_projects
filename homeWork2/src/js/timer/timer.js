@@ -7,7 +7,7 @@ let buttonRun = document.getElementById("buttonStart");
 let buttonReset = document.getElementById("buttonReset");
 let timerShow = document.getElementById("resultTimer");
 let setTimer = document.getElementById("setTime");
-let audioElement = new Audio('notification.mp3');
+let audioElement = new Audio('media/notification.mp3');
 let statusTimer = false;
 
 const renderResult = (text) => {

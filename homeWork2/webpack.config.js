@@ -3,56 +3,107 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
-const TerserPlugin = require("terser-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+
+//Признак того в каком режиме происходит сборка проекта
+const isDev = process.env.NODE_ENV === 'development';
+const isProd = !isDev;
+
+//Для того что бы в девелопе названия файлов без были хеша
+const fileName = (ext) => isDev ? `[name].${ext}` : `[name].[contenthash].${ext}`;
 
 module.exports = {
-    entry: './project/src/main.js',
+    //папка с исходниками
+    context: resolve(__dirname, 'src'),
+    //входная точка
+    entry: './js/main.js',
+    //куда все будет складываться
     output: {
-        path: resolve(__dirname, 'distWebpack'),
-        filename: 'main.[contenthash].js'
+        filename: `./js/${fileName('js')}`,
+        path: resolve(__dirname, 'dist'),
+    },
+    devtool: isProd ? false : 'source-map',
+    devServer: {
+        port: 9000,
+        //возвращается к index.html, когда маршрут не найден (404)
+        historyApiFallback: true,
+        //включить сжатие gzip
+        compress: true,
+        //обновление содержимого html и css без обновления страницы
+        hot: true
     },
     plugins: [
+        //для того что бы появился index.html файл
         new HtmlWebpackPlugin(
             {
-                template: resolve(__dirname, 'project/index.html')
+                template: resolve(__dirname, 'src/index.html'),
+                filename: 'index.html'
             }
         ),
+        //для того что бы появился .css файл
         new MiniCssExtractPlugin(
             {
-                filename: '[name].[contenthash].css'
+                filename: `./css/${fileName('css')}`,
             }
         ),
+        //чистим папку dist при каждой сборки
         new CleanWebpackPlugin(),
         //new BundleAnalyzerPlugin(),
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: resolve(__dirname, 'src/media'),
+                    to: resolve(__dirname, 'dist/media')
+                }
+            ]
+        })
     ],
     module: {
         rules: [
             {
-                test: /\.(png|jpe?g|gif|mp3)$/,
-                loader: 'file-loader',
-                options: {
-                    name: '[name].[ext]',
-                },
+                test: /\.html$/i,
+                use: [
+                    {
+                        loader: 'html-loader',
+                        options: {
+                            //если включить тогда все медиа из html будут грузится автоматом
+                            //Но так как использую file-loader то обрабатываю руками
+                            esModule: false
+                        }
+                    }]
             },
             {
                 test: /\.(c|sa|sc)ss$/,
-                use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            esModule: false
+                        }
+                    },
+                    'sass-loader'
+                ]
             },
             {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader"
-                }
+                test: /\.(png|svg|jpg|jpeg|gif|ico)$/i,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: fileName('[ext]'),
+                            outputPath: 'img/'
+                        }
+                    },
+                ]
+            },
+            {
+                test: /\.m?js$/,
+                exclude: /(node_modules|bower_components)/,
+                use: ['babel-loader']
             }
         ]
-    },
-    devServer: {
-        port: 9000
-    },
-    optimization: {
-        minimize: true,
-        minimizer: [new TerserPlugin()],
-    },
+    }
+
 };

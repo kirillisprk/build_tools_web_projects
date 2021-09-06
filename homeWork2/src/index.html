@@ -1,0 +1,44 @@
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+	      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Калькулятор и Таймер</title>
+	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+</head>
+<body>
+<div class="container">
+	<div class="tabs">
+		<button class="tab-button active" data-id="calculatorDate">Калькулятор дат</button>
+		<button class="tab-button" data-id="timer">Таймер</button>
+	</div>
+	<div class="content active" id="calculatorDate">
+		<form id="datecalc" class="calculatorDate">
+			<label>
+				<strong>Первая дата:</strong>
+				<input type="date" name="firstDate"/>
+			</label>
+			<label>
+				<strong>Вторая дата:</strong>
+				<input type="date" name="secondDate"/>
+			</label>
+			<button type="submit" class="shine-button calculatorDate__position">Рассчитать промежуток</button>
+			<p id="datecalc__result" class="result-count-date"></p>
+		</form>
+	</div>
+	<div class="content" id="timer">
+		<div class="timer-control">
+			<label>
+				<input id="setTime" class="setTime" type="time" step="1" value="00:00:00"/>
+			</label>
+			<div class="button-group">
+				<button class="button-position shine-button" id="buttonStart" disabled>Старт</button>
+				<button class="button-position none shine-button" id="buttonReset">Стоп</button>
+			</div>
+		</div>
+		<div id="resultTimer" class="resultTimer"></div>
+	</div>
+</div>
+</body>
+</html>

@@ -24,6 +24,11 @@ module.exports = {
         path: resolve(__dirname, 'dist'),
     },
     devtool: isProd ? false : 'source-map',
+    optimization: {
+        splitChunks: {
+            chunks: 'all'
+        }
+    },
     devServer: {
         port: 9000,
         //возвращается к index.html, когда маршрут не найден (404)
